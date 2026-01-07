@@ -17,16 +17,29 @@ class Game
 	private void CreateRooms()
 	{
 		// Create the rooms
-		Room outside = new Room("outside the main entrance of the university");
+		Room outside = new Room("outside the main entrance of the university"); // HOME/ start/ pochatok
+		Room outsideUp= new Room("on a roof of the university");
+		Room outsideDown= new Room("at a basement");
+
 		Room theatre = new Room("in a lecture theatre");
+
+
 		Room pub = new Room("in the campus pub");
+
+
 		Room lab = new Room("in a computing lab");
+
+
 		Room office = new Room("in the computing admin office");
+		
 
 		// Initialise room exits
 		outside.AddExit("east", theatre);
 		outside.AddExit("south", lab);
 		outside.AddExit("west", pub);
+		outside.AddExit("up", outsideUp); outsideUp.AddExit("down",outside);
+		outside.AddExit("down",outsideDown); outsideDown.AddExit("up",outside);
+		
 
 		theatre.AddExit("west", outside);
 
