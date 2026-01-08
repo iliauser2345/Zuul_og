@@ -53,6 +53,9 @@ class Game
 
 		office.AddExit("west", lab);
 
+		//Room events/modifiers
+		
+
 		// Create your Items here
 		// ...
 		// And add them to the Rooms
@@ -70,9 +73,11 @@ class Game
 		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the player wants to quit.
 		bool finished = false;
-		while (!finished)
+		bool isdead = false;
+		while (!finished && !isdead)
 		{
 			Command command = parser.GetCommand();
+			isdead=player.isalive(player.health);
 			finished = ProcessCommand(command);
 		}
 		Console.WriteLine("Thank you for playing.");
