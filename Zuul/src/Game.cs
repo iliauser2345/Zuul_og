@@ -118,6 +118,9 @@ class Game
 			case "look":
 				Console.WriteLine(player.CurrentRoom.GetLongDescription());
 				break;
+			case "stats":
+				Console.WriteLine("HP: "+player.health);
+				break;
 		}
 
 		return wantToQuit;
