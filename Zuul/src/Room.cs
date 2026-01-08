@@ -1,15 +1,22 @@
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 
 class Room
 {
 	// Private fields
 	private string description;
+	public string modifier;
+	public int modifierValue;
+	public string modifierDescpription;
 	private Dictionary<string, Room> exits; // stores exits of this room.
 
 	// Create a room described "description". Initially, it has no exits.
 	// "description" is something like "in a kitchen" or "in a court yard".
-	public Room(string desc)
+	public Room(string desc, string mods, int value, string mdesc)
 	{
+		modifier=mods;
+		modifierValue=value;
+		modifierDescpription=mdesc;
 		description = desc;
 		exits = new Dictionary<string, Room>();
 	}

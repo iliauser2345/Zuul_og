@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
+using System.Text;
 
 class Player
 {
@@ -43,16 +45,26 @@ class Player
         }
         return stat; 
     }
-    public void EnterRoom(string mod,int value) //aplliance of modifiers to the player.Each is prescribed per room
+    public void ModifierUponEnteranceRoom(Room enteredroom) //aplliance of modifiers to the player.Each is prescribed per room
     {
+        string mod= enteredroom.modifier;
+        int value= enteredroom.modifierValue;
+        string modDescription=enteredroom.modifierDescpription;
+
         switch (mod)
         {
             case "heal":
             health=heal(value);
+            Console.WriteLine(modDescription);
             break;
             case "damage":
             health=damage(value);
+            Console.WriteLine(modDescription);
             break;
+            case "none":
+            Console.WriteLine(modDescription);
+            break;
+            
             //... add more mods here
 
         }

@@ -18,20 +18,20 @@ class Game
 	private void CreateRooms()
 	{
 		// Create the rooms
-		Room outside = new Room("outside the main entrance of the university"); // HOME/ start/ pochatok
-		Room outsideUp= new Room("on a roof of the university");
-		Room outsideDown= new Room("at a basement");
+		Room outside = new Room("outside the main entrance of the university","none",0,"You feel a cool breeze as you observe leaves falling from the trees[no effect]"); // HOME/ start/ pochatok
+		Room outsideUp= new Room("on a roof of the university","damage",10,"on your way to climbing the building you have slipped and fell enduring a fall damage, however from the second try you succeded![10 HP of damage sustained]");
+		Room outsideDown= new Room("at a basement","damage",10,"BOOBY TRAP! you have been hit by a hidden explosive device, however you have found cover behind a column what prevented you from sustaining major wounds[10 HP of damage dealt]");
 
-		Room theatre = new Room("in a lecture theatre");
-
-
-		Room pub = new Room("in the campus pub");
+		Room theatre = new Room("in a lecture theatre","heal",5,"Room featured a sign with a motivational quote, you feel inspired which gives you a strange feeling of.... healing[5 HP received]");
 
 
-		Room lab = new Room("in a computing lab");
+		Room pub = new Room("in the campus pub","damage",3,"After a refreshing pint of beer you feel pleased, however your liver did not approve[3 HP of damage received]");
 
 
-		Room office = new Room("in the computing admin office");
+		Room lab = new Room("in a computing lab","none",0,"Finally at home, with computers[no effect]");
+
+
+		Room office = new Room("in the computing admin office","damage",0,"Ugh...Office, you are suffering from boredom. emotional damage sustained[0 HP of damage recieved]");
 
 		player.CurrentRoom=outside; //Start Point
 		
@@ -54,7 +54,7 @@ class Game
 		office.AddExit("west", lab);
 
 		//Room events/modifiers
-		
+
 
 		// Create your Items here
 		// ...
@@ -74,7 +74,7 @@ class Game
 		// execute them until the player wants to quit.
 		bool finished = false;
 		bool isdead = false;
-		while (!finished && !isdead)
+		while (!finished)// && !isdead)
 		{
 			Command command = parser.GetCommand();
 			isdead=player.isalive(player.health);
@@ -169,5 +169,6 @@ class Game
 
 		player.CurrentRoom = nextRoom;
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		player.ModifierUponEnteranceRoom(player.CurrentRoom);
 	}
 }
