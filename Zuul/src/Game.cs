@@ -19,8 +19,8 @@ class Game
 	{
 		// Create the rooms
 		Room outside = new Room("outside the main entrance of the university","none",0,"You feel a cool breeze as you observe leaves falling from the trees[no effect]"); // HOME/ start/ pochatok
-		Room outsideUp= new Room("on a roof of the university","damage",10,"on your way to climbing the building you have slipped and fell enduring a fall damage, however from the second try you succeded![10 HP of damage sustained]");
-		Room outsideDown= new Room("at a basement","damage",10,"BOOBY TRAP! you have been hit by a hidden explosive device, however you have found cover behind a column what prevented you from sustaining major wounds[10 HP of damage dealt]");
+		Room outsideUp= new Room("on a rooftop of the university","damage",10,"on your way to climbing the building you have slipped and fell enduring a fall damage, however from the second try you succeded![10 HP of damage sustained]");
+		Room outsideDown= new Room("at a basement","damage",10,"BOOBY TRAP! you have been hit by a hidden explosive device, however you have found cover behind a pillar what prevented you from sustaining major wounds[10 HP of damage dealt]");
 
 		Room theatre = new Room("in a lecture theatre","heal",5,"Room featured a sign with a motivational quote, you feel inspired which gives you a strange feeling of.... healing[5 HP received]");
 
@@ -73,12 +73,19 @@ class Game
 		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the player wants to quit.
 		bool finished = false;
-		bool isdead = false;
-		while (!finished)// && !isdead)
+		bool dead=false;
+		while (!finished)
 		{
-			Command command = parser.GetCommand();
-			isdead=player.isalive(player.health);
-			finished = ProcessCommand(command);
+			dead=player.died(player.health);
+			if (dead == true)
+			{
+				Console.WriteLine("You have perished from sustained damage");
+				break;
+			}else if (!dead)
+			{
+				Command command = parser.GetCommand();
+				finished = ProcessCommand(command);
+			}
 		}
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
@@ -105,7 +112,7 @@ class Game
 
 		if(command.IsUnknown())
 		{
-			Console.WriteLine("I don't know what you mean...");
+			Console.WriteLine("You get confused while figuring out what are you going to do[ !WRONG COMMAND! try again or type help ]");
 			return wantToQuit; // false
 		}
 
@@ -150,6 +157,7 @@ class Game
 	// room, otherwise print an error message.
 	private void GoRoom(Command command)
 	{
+		bool dead=player.died(player.health);
 		if(!command.HasSecondWord())
 		{
 			// if there is no second word, we don't know where to go...
@@ -168,7 +176,8 @@ class Game
 		}
 
 		player.CurrentRoom = nextRoom;
-		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		player.ModifierUponEnteranceRoom(player.CurrentRoom);
+		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		
 	}
 }

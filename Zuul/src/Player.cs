@@ -33,15 +33,15 @@ class Player
             return result;
         }
     }
-    public bool isalive(int health)
+    public bool died(int health)
     {   
-        bool stat=true; 
-        if (health == 0)
-        {
-            stat=false;
-        }else if (health != 0)
+        bool stat=false; 
+        if (health <= 0)
         {
             stat=true;
+        }else if (health >= 0)
+        {
+            stat=false;
         }
         return stat; 
     }
