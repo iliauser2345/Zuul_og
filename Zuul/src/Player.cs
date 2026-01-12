@@ -34,14 +34,16 @@ class Player
         }
     }
     public bool died(int health)
-    {   
+    {  
         bool stat=false; 
-        if (health <= 0)
+        switch (health)
         {
+            case <=0:
             stat=true;
-        }else if (health >= 0)
-        {
+            break;
+            case >0:
             stat=false;
+            break;
         }
         return stat; 
     }

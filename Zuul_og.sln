@@ -4,11 +4,7 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuul", "Zuul\Zuul.csproj", "{B542EA9D-5C1C-65DD-A26E-A61327A51287}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__MACOSX", "__MACOSX", "{9E982F8E-DB0D-AC98-A11B-655EE4BC5F8F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Zuul", "Zuul", "{4D3410AB-9960-1B22-9573-02DF72E14E68}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "._Zuul", "__MACOSX\Zuul\._Zuul.csproj", "{B017BD3E-AE35-6566-1E03-E7E9A6FE5C70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
