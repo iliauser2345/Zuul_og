@@ -7,3 +7,13 @@ Win condition check added and that's supposed to stop the game once acomplished,
 Items is now a thing{Items.cs}
 +
 Added additional props(...item type, item modifier value, item modifier value) to the class and Water and Whiskey as the first two items.
+========================================================
+inventory is now a thing. Putting smth into it is checked by Put()::bool.
++
+added Get(string)::Item which summons an item from a dictionary and removes it
++
+TotalWeight(void)::int, summation of all items in a dictionary
++
+FreeWeight(void)::int, returns an amount of free avaliable "kg" of weight, not occupied by items.
+
+Honestly no fucking idea on if this stuff works bc it is not testable but we pray they do work (Г_Г)
