@@ -9,43 +9,31 @@ class Player
  // auto property
     public Room CurrentRoom { get; set; }
 //fields
-    public int health;
+    private int health;
+    private bool deathstatus;
  // constructor
     public Player()
     {
         CurrentRoom = null;
-        health=100;
+        health=10;
+        deathstatus=deathcheck(health);
     }
-    public int damage(int amount)
+    public int GetHealth()=>health;
+    public bool GetDeathStatus()=>deathstatus;
+    public void HpModify(int amount)
     {
-        int result= health-amount;
-        return result;
+        health=health+amount;
     }
-    public int heal(int amount)
+    public bool deathcheck(int health)
     {
-        int result=health+amount;
-        if (result > 100)
+        if (health <= 0)
         {
-            return result-(result-100);
+            return true;
         }
         else
         {
-            return result;
+            return false;
         }
-    }
-    public bool died(int health)
-    {  
-        bool stat=false; 
-        switch (health)
-        {
-            case <=0:
-            stat=true;
-            break;
-            case >0:
-            stat=false;
-            break;
-        }
-        return stat; 
     }
     public void ModifierUponEnteranceRoom(Room enteredroom) //aplliance of modifiers to the player.Each is prescribed per room
     {
@@ -55,12 +43,8 @@ class Player
 
         switch (mod)
         {
-            case "heal":
-            health=heal(value);
-            Console.WriteLine(modDescription);
-            break;
-            case "damage":
-            health=damage(value);
+            case "ModifyHP":
+            HpModify(value);
             Console.WriteLine(modDescription);
             break;
             case "none":
@@ -70,5 +54,12 @@ class Player
             //... add more mods here
 
         }
+    
+
+    
+    
+    
+    
     }
+
 }
