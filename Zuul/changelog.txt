@@ -1,0 +1,9 @@
+From now on every commit log is here because i want it to be here XD
+-
+Deleted Deathstatus bool var due to useslessness {Player.cs}
++
+Win condition check added and that's supposed to stop the game once acomplished, however there's no practical condition yet, so it just exists.{Game.cs}
+======================================================
+Items is now a thing{Items.cs}
++
+Added additional props(...item type, item modifier value, item modifier value) to the class and Water and Whiskey as the first two items.

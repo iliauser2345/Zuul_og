@@ -10,16 +10,14 @@ class Player
     public Room CurrentRoom { get; set; }
 //fields
     private int Health;
-    private bool DeathStatus;
+
  // constructor
     public Player()
     {
         CurrentRoom = null;
         Health=10;
-        DeathStatus=DeathCheck(Health);
     }
     public int GetHealth()=>Health;
-    public bool GetDeathStatus()=>DeathStatus;
     public void HpModify(int amount)
     {
         Health=Health+amount;

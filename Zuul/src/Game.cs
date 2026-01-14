@@ -7,12 +7,17 @@ class Game
 	private Parser parser;
 	private Player player;
 
+
 	// Constructor
 	public Game()
 	{
 		parser = new Parser();
 		player = new Player();
 		CreateRooms();
+	}
+	private bool WinConditionCheck()
+	{
+		return false;
 	}
 
 	// Initialise the Rooms (and the Items)
@@ -57,8 +62,10 @@ class Game
 		//Room events/modifiers
 
 
-		// Create your Items here
-		// ...
+		// Create Items
+		Item water= new Item(2,"A bottle of refreshing water, in case you are thirsty","utility","heal",5);
+		Item whiskey= new Item(2,"Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","damage",3);
+		
 		// And add them to the Rooms
 		// ...
 
@@ -73,13 +80,15 @@ class Game
 
 		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the player wants to quit.
-		bool finished = false;
-		bool dead=false;
+		bool finished;
+		bool dead;
+		bool WinConAcomplished;
 		for(
 			finished=false,
-			dead=false;
-			!finished && !dead;
-			dead=player.DeathCheck(player.GetHealth())
+			dead=false,WinConAcomplished=false;
+			!finished && !dead && !WinConAcomplished;
+			dead=player.DeathCheck(player.GetHealth()),
+			WinConAcomplished=WinConditionCheck()
 		)
 		{	
 			Command command = parser.GetCommand();
@@ -88,6 +97,12 @@ class Game
 		if (player.DeathCheck(player.GetHealth()) == true)
 		{
 			Console.WriteLine("You have Perished");
+			Console.WriteLine("Press [Enter] to continue.");
+			Console.ReadLine();
+		}
+		else if (WinConAcomplished == true)
+		{
+			Console.WriteLine("WIN MSG");
 			Console.WriteLine("Press [Enter] to continue.");
 			Console.ReadLine();
 		}
