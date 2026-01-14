@@ -8,6 +8,8 @@ class Room
 	public string modifier;
 	public int modifierValue;
 	public string modifierDescpription;
+	private Inventory chest;
+	public Inventory Chest{get{return chest;}}
 	private Dictionary<string, Room> exits; // stores exits of this room.
 
 	// Create a room described "description". Initially, it has no exits.
@@ -19,6 +21,7 @@ class Room
 		modifierDescpription=mdesc;
 		description = desc;
 		exits = new Dictionary<string, Room>();
+		chest= new Inventory(999999);
 	}
 
 	// Define an exit for this room.

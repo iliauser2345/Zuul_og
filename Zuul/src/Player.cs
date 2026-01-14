@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Runtime;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Text;
 
@@ -10,10 +11,12 @@ class Player
     public Room CurrentRoom { get; set; }
 //fields
     private int Health;
+    private Inventory backpack;
 
  // constructor
     public Player()
-    {
+    {   
+        backpack= new Inventory(25);
         CurrentRoom = null;
         Health=10;
     }
@@ -52,12 +55,33 @@ class Player
             //... add more mods here
 
         }
-    
-
-    
-    
-    
-    
     }
-
+    public bool TakeFromRoom(string itemName)
+    {   
+        Item selectedItem= CurrentRoom.Chest.Get(itemName);
+        const string SuccesMessage="You have succesfully performed an action";
+        const string FailMessage="You have failed to perform an action";
+        string msg=backpack.Put(itemName,selectedItem)?SuccesMessage:FailMessage;
+        Console.WriteLine(msg);
+        return msg switch
+        {
+            SuccesMessage => true,
+            FailMessage => false,
+            _ => false,
+        };
+    }
+    public bool GiveToRoom(string itemName)
+    {   
+        Item selectedItem= backpack.Get(itemName);
+        const string SuccesMessage="You have succesfully performed an action";
+        const string FailMessage="You have failed to perform an action";
+        string msg=CurrentRoom.Chest.Put(itemName,selectedItem)?SuccesMessage:FailMessage;
+        Console.WriteLine(msg);
+        return msg switch
+        {
+            SuccesMessage => true,
+            FailMessage => false,
+            _ => false,
+        };
+    }
 }

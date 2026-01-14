@@ -8,12 +8,19 @@ Items is now a thing{Items.cs}
 +
 Added additional props(...item type, item modifier value, item modifier value) to the class and Water and Whiskey as the first two items.
 ========================================================
-inventory is now a thing. Putting smth into it is checked by Put()::bool.
+inventory is now a thing. Putting smth into it is checked by Put()::bool.{inventory.cs}
 +
-added Get(string)::Item which summons an item from a dictionary and removes it
+added Get(string)::Item which summons an item from a dictionary and removes it{inventory.cs}
 +
-TotalWeight(void)::int, summation of all items in a dictionary
+TotalWeight(void)::int, summation of all items in a dictionary{inventory.cs}
 +
-FreeWeight(void)::int, returns an amount of free avaliable "kg" of weight, not occupied by items.
+FreeWeight(void)::int, returns an amount of free avaliable "kg" of weight, not occupied by items.{inventory.cs}
 
-Honestly no fucking idea on if this stuff works bc it is not testable but we pray they do work (Г_Г)
+Honestly no fucking idea on if this stuff works bc it is not testable but we pray they do work (Г_Г) debugging will be fun...
+===============================================================
+Room has an inventory XDXDXD {Room.cs}
++
+GiveToRoom(string)::bool is now a thing. you can place items into the rooms inventory from player's one.
++
+TakeFromRoom(string)::bool is born. Allows to move items from room's inventory to player's.
+==============================================================================

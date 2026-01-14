@@ -37,10 +37,6 @@ class Inventory
         {
             return null;
         }
-    // TODO implementeer:
-    // Zoek Item in de Dictionary
-    // Verwijder Item uit Dictionary (als gevonden)
-    // Return Item of null
     }
     public int TotalWeight()
     {
