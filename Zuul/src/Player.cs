@@ -9,22 +9,22 @@ class Player
  // auto property
     public Room CurrentRoom { get; set; }
 //fields
-    private int health;
-    private bool deathstatus;
+    private int Health;
+    private bool DeathStatus;
  // constructor
     public Player()
     {
         CurrentRoom = null;
-        health=10;
-        deathstatus=deathcheck(health);
+        Health=10;
+        DeathStatus=DeathCheck(Health);
     }
-    public int GetHealth()=>health;
-    public bool GetDeathStatus()=>deathstatus;
+    public int GetHealth()=>Health;
+    public bool GetDeathStatus()=>DeathStatus;
     public void HpModify(int amount)
     {
-        health=health+amount;
+        Health=Health+amount;
     }
-    public bool deathcheck(int health)
+    public bool DeathCheck(int health)
     {
         if (health <= 0)
         {

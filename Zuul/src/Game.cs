@@ -75,12 +75,17 @@ class Game
 		// execute them until the player wants to quit.
 		bool finished = false;
 		bool dead=false;
-		for(finished=false,dead=false;!finished && !dead;dead=player.deathcheck(player.GetHealth()))
+		for(
+			finished=false,
+			dead=false;
+			!finished && !dead;
+			dead=player.DeathCheck(player.GetHealth())
+		)
 		{	
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
 		}
-		if (player.deathcheck(player.GetHealth()) == true)
+		if (player.DeathCheck(player.GetHealth()) == true)
 		{
 			Console.WriteLine("You have Perished");
 			Console.WriteLine("Press [Enter] to continue.");
