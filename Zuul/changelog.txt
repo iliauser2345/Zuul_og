@@ -24,3 +24,10 @@ GiveToRoom(string)::bool is now a thing. you can place items into the rooms inve
 +
 TakeFromRoom(string)::bool is born. Allows to move items from room's inventory to player's.
 ==============================================================================
+Working Inventory system
++
+You can Grab(Command)::void stuff
++
+You can Drop(Command)::void stuff
++
+You get a description of items in the room through ShowListOfItems(Inventory,string entry)::string. If your entry states INVENTORY you get only the names of the items(for showing in the inventory duh), also it gets displayed at the terminal for clarity. By any other entry you get a full desc of an item and also entry gets displayed.
