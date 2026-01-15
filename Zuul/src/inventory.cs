@@ -1,3 +1,5 @@
+using System.Xml;
+
 class Inventory
 {
     // fields
@@ -58,4 +60,30 @@ class Inventory
     {
         return maxWeight-TotalWeight();
     }
+    public string ShowListOfItems(Inventory inv,string entry)
+    {	
+		int i;
+        string output=entry+":\n";
+        string outputNameItem;
+		for(
+			i=0;
+			i<inv.items.Count;
+            i++
+		)
+		{
+			Item LoopThrItem=inv.items.Values.ElementAt(i);
+            if (entry == "INVENTORY")
+            {
+                outputNameItem=LoopThrItem.ItemName;
+            }
+            else
+            {
+                outputNameItem=LoopThrItem.ItemDescription;
+            }
+            string item=outputNameItem+": "+LoopThrItem.ItemModifier+" {"+LoopThrItem.ItemModValue.ToString()+"}\n";
+            output+=item;
+		}
+        return output;
+    }
+    
 }

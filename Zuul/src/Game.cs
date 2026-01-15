@@ -63,11 +63,11 @@ class Game
 
 
 		// Create Items
-		Item water= new Item(2,"A bottle of refreshing water, in case you are thirsty","utility","heal",5);
-		Item whiskey= new Item(2,"Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","damage",3);
-		
+		Item water= new Item("Water",2,"a bottle of refreshing water, in case you are thirsty","utility","heal",5);
+		Item whiskey= new Item("Whiskey",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","damage",3);
+		/////////////////////player.GetInventoryPlayer().Put("Water", water);
 		// And add them to the Rooms
-		// ...
+		lab.Chest.Put("Whiskey",whiskey);
 
 		// Start game outside
 		player.CurrentRoom = outside;
@@ -155,15 +155,58 @@ class Game
 			case "stats":
 				Console.WriteLine("HP: "+player.GetHealth());
 				break;
+			case "inventory":
+				Console.WriteLine(player.GetInventoryPlayer().ShowListOfItems(player.GetInventoryPlayer(),"INVENTORY"));
+				break;
+			case "grab":
+				Grab(command);
+				break;
+			case "drop":
+				Drop(command);
+				break;
 
 		}
 
 		return wantToQuit;
 	}
 
+
 	// ######################################
 	// implementations of user commands:
 	// ######################################
+	
+	//Grab item
+	public void Grab(Command command)
+	{
+		string itemName=command.SecondWord;
+		Item item=player.CurrentRoom.Chest.Get(itemName);
+		if (item != null)
+		{
+			player.GetInventoryPlayer().Put(itemName,item);
+			Console.WriteLine("You have succesfully retrieved: "+item.ItemName);
+		}
+		else
+		{
+			Console.WriteLine("After a several time of search you have failed to find "+itemName);
+		}
+
+	}
+	// Drop item
+	public void Drop(Command command)
+	{
+		string itemName=command.SecondWord;
+		Item item=player.GetInventoryPlayer().Get(itemName);
+		if (item != null)
+		{
+			player.CurrentRoom.Chest.Put(itemName,item);
+			Console.WriteLine("You have decided that "+item.ItemName+" won't be needed anymore and left it behind");
+		}
+		else
+		{
+			Console.WriteLine("You are suprised to find out that you didn't have "+item.ItemName+" at the first place. Nevermind then");
+		}
+		
+	}
 	
 	// Print out some help information.
 	// Here we print the mission and a list of the command words.
@@ -199,7 +242,9 @@ class Game
 
 		player.CurrentRoom = nextRoom;
 		player.ModifierUponEnteranceRoom(player.CurrentRoom);
+		
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		Console.WriteLine(player.CurrentRoom.Chest.ShowListOfItems(player.CurrentRoom.Chest,"Here you find:"));
 		
 	}
 }

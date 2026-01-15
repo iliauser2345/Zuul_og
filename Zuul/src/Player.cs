@@ -21,6 +21,7 @@ class Player
         Health=10;
     }
     public int GetHealth()=>Health;
+    public Inventory GetInventoryPlayer()=>backpack;
     public void HpModify(int amount)
     {
         Health=Health+amount;
@@ -55,33 +56,5 @@ class Player
             //... add more mods here
 
         }
-    }
-    public bool TakeFromRoom(string itemName)
-    {   
-        Item selectedItem= CurrentRoom.Chest.Get(itemName);
-        const string SuccesMessage="You have succesfully performed an action";
-        const string FailMessage="You have failed to perform an action";
-        string msg=backpack.Put(itemName,selectedItem)?SuccesMessage:FailMessage;
-        Console.WriteLine(msg);
-        return msg switch
-        {
-            SuccesMessage => true,
-            FailMessage => false,
-            _ => false,
-        };
-    }
-    public bool GiveToRoom(string itemName)
-    {   
-        Item selectedItem= backpack.Get(itemName);
-        const string SuccesMessage="You have succesfully performed an action";
-        const string FailMessage="You have failed to perform an action";
-        string msg=CurrentRoom.Chest.Put(itemName,selectedItem)?SuccesMessage:FailMessage;
-        Console.WriteLine(msg);
-        return msg switch
-        {
-            SuccesMessage => true,
-            FailMessage => false,
-            _ => false,
-        };
     }
 }
