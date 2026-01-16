@@ -18,6 +18,8 @@ class CommandLibrary
 		validCommands.Add("inventory");
 		validCommands.Add("grab");
 		validCommands.Add("drop");
+		validCommands.Add("use");
+		validCommands.Add("equip");
 	}
 
 	// Check whether a given string is a valid command word.

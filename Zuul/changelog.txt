@@ -31,3 +31,11 @@ You can Grab(Command)::void stuff
 You can Drop(Command)::void stuff
 +
 You get a description of items in the room through ShowListOfItems(Inventory,string entry)::string. If your entry states INVENTORY you get only the names of the items(for showing in the inventory duh), also it gets displayed at the terminal for clarity. By any other entry you get a full desc of an item and also entry gets displayed.
+=============================================
+ModifierUponEntaranceRoom(Room)::void is not a thing anymore. BEHOLD the Ultimate modifier tool: ModifierAppliance(Room,Item,string,Character)::void. Applies a modifier based on the source and target.
++
+Inventory entry now gives a type of an item(utility of item for now)
++
+Player class became a Character and in Game.cs there is enemy=new Character()
++
+UseItem(Command)::void is now a thing. Uses an utility item and applies a modifier respectfully, unless given weapon type is a weapon, then it refers you to first equipping it(WIP)

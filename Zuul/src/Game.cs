@@ -5,14 +5,17 @@ class Game
 {
 	// Private fields
 	private Parser parser;
-	private Player player;
+	private Character player;
+	private Character enemy;
 
 
 	// Constructor
 	public Game()
 	{
 		parser = new Parser();
-		player = new Player();
+		player = new Character();
+		enemy= new Character();
+		
 		CreateRooms();
 	}
 	private bool WinConditionCheck()
@@ -63,8 +66,8 @@ class Game
 
 
 		// Create Items
-		Item water= new Item("Water",2,"a bottle of refreshing water, in case you are thirsty","utility","heal",5);
-		Item whiskey= new Item("Whiskey",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","damage",3);
+		Item water= new Item("Water",2,"a bottle of refreshing water, in case you are thirsty","utility","ModifyHp","You took a sip of water and did not notice how it ran out",5);
+		Item whiskey= new Item("Whiskey",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",3);
 		/////////////////////player.GetInventoryPlayer().Put("Water", water);
 		// And add them to the Rooms
 		lab.Chest.Put("Whiskey",whiskey);
@@ -164,6 +167,9 @@ class Game
 			case "drop":
 				Drop(command);
 				break;
+			case "use":
+				UseItem(command);
+				break;
 
 		}
 
@@ -241,10 +247,36 @@ class Game
 		}
 
 		player.CurrentRoom = nextRoom;
-		player.ModifierUponEnteranceRoom(player.CurrentRoom);
+		player.ModifierAplication(player.CurrentRoom,null,"room",player);
 		
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		Console.WriteLine(player.CurrentRoom.Chest.ShowListOfItems(player.CurrentRoom.Chest,"Here you find:"));
 		
+	}
+	private void UseItem(Command command)
+	{
+		if(!command.HasSecondWord())
+		{
+			// if there is no second word there's no item to use
+			Console.WriteLine("Which item?");
+			return;
+		}
+		string itemName=command.SecondWord;
+		Item item=player.GetInventoryPlayer().Get(itemName);
+		if (item == null)
+		{
+			Console.WriteLine("There is no such item in your inventory");
+			return;
+		}
+		string typeItem=item.ItemType;
+		switch (typeItem)
+		{
+			case "utility":
+				player.ModifierAplication(null,item,"item",player);
+				break;
+			case "weapon":
+				Console.WriteLine("You have to equip it in order to use");
+				break;
+		}
 	}
 }
