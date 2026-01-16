@@ -5,16 +5,15 @@ class Game
 {
 	// Private fields
 	private Parser parser;
-	private Character player;
-	private Character enemy;
+	private Player player;
+	private Hostile enemy;
 
 
 	// Constructor
 	public Game()
 	{
 		parser = new Parser();
-		player = new Character();
-		enemy= new Character();
+		player = new Player();
 		
 		CreateRooms();
 	}
@@ -153,13 +152,13 @@ class Game
 				wantToQuit = true;
 				break;
 			case "look":
-				Console.WriteLine(player.CurrentRoom.GetLongDescription());
+				Console.WriteLine(player.CurrentRoom.GetLongDescription()+"\n"+player.CurrentRoom.Chest.ShowListOfItems(player.CurrentRoom.Chest,"Here you found:"));
 				break;
 			case "stats":
 				Console.WriteLine("HP: "+player.GetHealth());
 				break;
 			case "inventory":
-				Console.WriteLine(player.GetInventoryPlayer().ShowListOfItems(player.GetInventoryPlayer(),"INVENTORY"));
+				Console.WriteLine(player.GetInventory().ShowListOfItems(player.GetInventory(),"INVENTORY"));
 				break;
 			case "grab":
 				Grab(command);
@@ -188,7 +187,7 @@ class Game
 		Item item=player.CurrentRoom.Chest.Get(itemName);
 		if (item != null)
 		{
-			player.GetInventoryPlayer().Put(itemName,item);
+			player.GetInventory().Put(itemName,item);
 			Console.WriteLine("You have succesfully retrieved: "+item.ItemName);
 		}
 		else
@@ -201,7 +200,7 @@ class Game
 	public void Drop(Command command)
 	{
 		string itemName=command.SecondWord;
-		Item item=player.GetInventoryPlayer().Get(itemName);
+		Item item=player.GetInventory().Get(itemName);
 		if (item != null)
 		{
 			player.CurrentRoom.Chest.Put(itemName,item);
@@ -250,7 +249,6 @@ class Game
 		player.ModifierAplication(player.CurrentRoom,null,"room",player);
 		
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
-		Console.WriteLine(player.CurrentRoom.Chest.ShowListOfItems(player.CurrentRoom.Chest,"Here you find:"));
 		
 	}
 	private void UseItem(Command command)
@@ -262,7 +260,7 @@ class Game
 			return;
 		}
 		string itemName=command.SecondWord;
-		Item item=player.GetInventoryPlayer().Get(itemName);
+		Item item=player.GetInventory().Get(itemName);
 		if (item == null)
 		{
 			Console.WriteLine("There is no such item in your inventory");
@@ -278,5 +276,6 @@ class Game
 				Console.WriteLine("You have to equip it in order to use");
 				break;
 		}
+		
 	}
 }

@@ -74,7 +74,7 @@ class Inventory
 			Item LoopThrItem=inv.items.Values.ElementAt(i);
             if (entry == "INVENTORY")
             {
-                outputNameItem=LoopThrItem.ItemName+" [ "+LoopThrItem.ItemType+" ]";
+                outputNameItem="Weight Capacity:[ "+inv.TotalWeight().ToString()+inv.maxWeight.ToString()+" ]\n \n"+LoopThrItem.ItemName+" [ "+LoopThrItem.ItemType+" ]";
             }
             else
             {

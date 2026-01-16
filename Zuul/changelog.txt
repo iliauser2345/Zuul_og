@@ -39,3 +39,7 @@ Inventory entry now gives a type of an item(utility of item for now)
 Player class became a Character and in Game.cs there is enemy=new Character()
 +
 UseItem(Command)::void is now a thing. Uses an utility item and applies a modifier respectfully, unless given weapon type is a weapon, then it refers you to first equipping it(WIP)
+============================================================
+Character is not just a rename it's a base class (wow) and player and hostile are subclasses.
++
+Now the showing items in the room system is bind to look command

@@ -10,7 +10,8 @@ class Room
 	public string modifierDescpription;
 	private Inventory chest;
 	public Inventory Chest{get{return chest;}}
-	private Dictionary<string, Room> exits; // stores exits of this room.
+	private Dictionary<string, Room> exits;
+	private Dictionary<string,Hostile> foes; // stores exits of this room.
 
 	// Create a room described "description". Initially, it has no exits.
 	// "description" is something like "in a kitchen" or "in a court yard".
@@ -22,6 +23,12 @@ class Room
 		description = desc;
 		exits = new Dictionary<string, Room>();
 		chest= new Inventory(999999);
+		foes=new Dictionary<string, Hostile>();
+	}
+	//assign a hostile
+	public void AddHostile(string name, Hostile hostile)
+	{
+		foes.Add(name,hostile);
 	}
 
 	// Define an exit for this room.
