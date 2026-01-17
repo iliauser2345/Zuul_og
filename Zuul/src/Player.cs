@@ -7,14 +7,16 @@ using System.Text;
 
 class Player : Character
 {
-//fields
-// constructor
-    public Player()
-    {   
-        inventory= new Inventory(25);
-        CurrentRoom = null;
-        Health=100;
-    }
-//methods
+    //fields
+    public string WeaponPlayer { get; set; }
+    // constructor
+        public Player(string EquipedWeapon): base(EquipedWeapon)
+        {   
+            inventory= new Inventory(25);
+            CurrentRoom = null;
+            Health=25;
+            
+        }
+    //methods
 }
    

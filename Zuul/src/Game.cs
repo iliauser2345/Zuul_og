@@ -6,14 +6,13 @@ class Game
 	// Private fields
 	private Parser parser;
 	private Player player;
-	private Hostile enemy;
 
 
 	// Constructor
 	public Game()
 	{
 		parser = new Parser();
-		player = new Player();
+		player = new Player(null);
 		
 		CreateRooms();
 	}
@@ -65,11 +64,20 @@ class Game
 
 
 		// Create Items
-		Item water= new Item("Water",2,"a bottle of refreshing water, in case you are thirsty","utility","ModifyHp","You took a sip of water and did not notice how it ran out",5);
-		Item whiskey= new Item("Whiskey",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",3);
-		/////////////////////player.GetInventoryPlayer().Put("Water", water);
+		Item water= new Item("water",2,"a bottle of refreshing water, in case you are thirsty","utility","ModifyHp","You took a sip of water and did not notice how it ran out",5);
+		Item whiskey= new Item("scotch",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",-3);
+		Item knife= new Item("switchblade",1,"a fancy switchblade. God prohibits violence but you never know when you need it...","weapon","ModifyHP","it's not the size, it's how you wield it",-10);
+		Item axe=new Item("fireaxe",5,"a fireaxe, usually found as a fire rescue tool but becomes a weapon to reckon with in good hands","weapon","ModifyHP","a powerfull swing of an axe makes the one enduring it actually feel",-30);
+
 		// And add them to the Rooms
-		lab.Chest.Put("Whiskey",whiskey);
+		lab.Chest.Put("scotch",whiskey);
+		outside.Chest.Put("switchblade",knife);
+		//Create Hostiles
+		Hostile professor=new Hostile("Professor","fireaxe",100,"an underpaid professor who guards this university as a side hustle is not pleased with your presence...");
+		//...
+		//Assign a Hostile to the Room
+		professor.CurrentRoom=theatre;
+		//...
 
 		// Start game outside
 		player.CurrentRoom = outside;
@@ -168,6 +176,12 @@ class Game
 				break;
 			case "use":
 				UseItem(command);
+				break;
+			case "equip":
+				EquipWeapon(command);
+				break;
+			case "unequip":
+				UnequipWeapon(command);
 				break;
 
 		}
@@ -274,8 +288,55 @@ class Game
 				break;
 			case "weapon":
 				Console.WriteLine("You have to equip it in order to use");
+				player.GetInventory().Put(itemName,item);
 				break;
 		}
 		
+	}
+	private void EquipWeapon(Command command)
+	{	
+		if(!command.HasSecondWord())
+		{
+			// if there is no second word there's no weapon to equip
+			Console.WriteLine("Equip what?");
+			return;
+		}
+		string itemName=command.SecondWord;
+		Item item=player.GetInventory().Get(itemName);
+		if (item == null)
+		{
+			Console.WriteLine("There is no such weapon in your inventory");
+			player.GetInventory().Put(itemName,item);
+			return;
+		}
+		string typeItem=item.ItemType;
+		if (typeItem != "weapon")
+		{
+			Console.WriteLine("can't fight with a "+itemName+" can you?");
+			player.GetInventory().Put(itemName,item);
+			return;
+		}
+		if (player.WeaponPlayer != null)
+		{
+			Console.WriteLine("Your hands are busy with a "+player.WeaponPlayer);
+			player.GetInventory().Put(itemName,item);
+			return;
+		}
+		player.WeaponPlayer=itemName;
+		Console.WriteLine("Now you are armed and dangerous with a "+itemName);
+		player.GetInventory().Put(itemName,item);
+	}
+	private void UnequipWeapon(Command command)
+	{
+		if(!command.HasSecondWord())
+		{
+			// if there is no second word there's no weapon to equip
+			Console.WriteLine("Unequip what?");
+			return;
+		}
+		Item item=player.GetInventory().Get(command.SecondWord);
+		player.WeaponPlayer=null;
+		Console.WriteLine("Succesfully unequiped a "+item.ItemName);
+		player.GetInventory().Put(item.ItemName,item);
 	}
 }

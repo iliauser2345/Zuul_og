@@ -43,3 +43,11 @@ UseItem(Command)::void is now a thing. Uses an utility item and applies a modifi
 Character is not just a rename it's a base class (wow) and player and hostile are subclasses.
 +
 Now the showing items in the room system is bind to look command
+=====================================
+two weapons added
++
+EquipItem(Command)::void. equips a weapon if it has corresponding item type.
++
+UnequipWeapon(Command)::void. unequips previously equipped weapon.
++
+professor is now an enemy and is assigned to the room
