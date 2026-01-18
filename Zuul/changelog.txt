@@ -51,3 +51,5 @@ EquipItem(Command)::void. equips a weapon if it has corresponding item type.
 UnequipWeapon(Command)::void. unequips previously equipped weapon.
 +
 professor is now an enemy and is assigned to the room
+===================================================
+There is a super sick combat system, however beginning of it is not implemented.

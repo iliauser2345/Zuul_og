@@ -1,7 +1,6 @@
 class Hostile : Character
 {
     //Fields
-    private Item WeaponEnemy;
     private string HostileName;
     private string HostileDescription;
     public string WeaponHostile { get; set; }
@@ -13,7 +12,8 @@ class Hostile : Character
         Health=HP;
         HostileDescription=desc;
         HostileName=name;
+        WeaponHostile=EquipedWeapon;
     }
     //methods
-    
+    public string GetHostileName()=>HostileName;
 }

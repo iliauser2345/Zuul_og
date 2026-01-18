@@ -1,12 +1,13 @@
 using System;
 using System.Runtime.CompilerServices;
-
+Random rnd=new Random();
 class Game
 {
+	Random rnd=new Random();
 	// Private fields
 	private Parser parser;
 	private Player player;
-
+	private int ActionPoints;
 
 	// Constructor
 	public Game()
@@ -66,8 +67,8 @@ class Game
 		// Create Items
 		Item water= new Item("water",2,"a bottle of refreshing water, in case you are thirsty","utility","ModifyHp","You took a sip of water and did not notice how it ran out",5);
 		Item whiskey= new Item("scotch",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",-3);
-		Item knife= new Item("switchblade",1,"a fancy switchblade. God prohibits violence but you never know when you need it...","weapon","ModifyHP","it's not the size, it's how you wield it",-10);
-		Item axe=new Item("fireaxe",5,"a fireaxe, usually found as a fire rescue tool but becomes a weapon to reckon with in good hands","weapon","ModifyHP","a powerfull swing of an axe makes the one enduring it actually feel",-30);
+		Item knife= new Item("switchblade",1,"a fancy switchblade. God prohibits violence but you never know when you need it...","weapon","ModifyHP","it's not the size, it's how you wield it",rnd.Next(-7,-10));
+		Item axe=new Item("fireaxe",5,"a fireaxe, usually found as a fire rescue tool but becomes a weapon to reckon with in good hands","weapon","ModifyHP","a powerfull swing of an axe makes the one enduring it actually feel",rnd.Next(-20,-30));
 
 		// And add them to the Rooms
 		lab.Chest.Put("scotch",whiskey);
@@ -95,7 +96,8 @@ class Game
 		bool WinConAcomplished;
 		for(
 			finished=false,
-			dead=false,WinConAcomplished=false;
+			dead=false,
+			WinConAcomplished=false;
 			!finished && !dead && !WinConAcomplished;
 			dead=player.DeathCheck(player.GetHealth()),
 			WinConAcomplished=WinConditionCheck()
@@ -261,7 +263,6 @@ class Game
 
 		player.CurrentRoom = nextRoom;
 		player.ModifierAplication(player.CurrentRoom,null,"room",player);
-		
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		
 	}
@@ -338,5 +339,127 @@ class Game
 		player.WeaponPlayer=null;
 		Console.WriteLine("Succesfully unequiped a "+item.ItemName);
 		player.GetInventory().Put(item.ItemName,item);
+	}
+	//COMBAT RELATED STUFF
+	private bool PlayerHasInitiative()
+	{
+		int initiative=rnd.Next(0,2);
+		return initiative switch
+		{
+			1=>true,
+			0=>false,
+			_=>false
+		};
+	}
+	private bool ProcessCombatCommand(Command command,Character target)
+	{
+		if(command.IsUnknown())
+		{
+			Console.WriteLine("[ !WRONG COMMAND! ]");
+		 	return false;
+		}
+		switch (command.CommandWord)
+		{
+			case "attack":
+				Attack(target);
+				break;
+			case "defend":
+				Defend();
+				break;
+		}
+		return false;
+	}
+	private void Attack(Character target)
+	{
+		if (ActionPoints >= 1)
+		{
+			Item item=player.GetInventory().Get(player.WeaponPlayer);
+			player.ModifierAplication(null,item,"item",target);
+			ActionPoints=-1;
+			player.GetInventory().Put(item.ItemName,item);
+		}
+	}
+	private bool Defend()
+	{
+		if (ActionPoints >= 2)
+		{	
+			ActionPoints=-2;
+			return true;
+		}
+		return false;
+	}
+	//COMBAT LOOP
+	private void CombatLoop(Player player, Hostile hostile)
+	{
+
+		//-----------INITIALYSING COMBAT-------------------------
+		bool DeathPlayer=false;
+		bool DeathHostile=false;
+		Console.WriteLine("---!!!-ENTERING COMBAT-!!!---\n\n");
+		ActionPoints=2;
+		bool PlayerBegins=PlayerHasInitiative();
+		string initvMsg=(!PlayerBegins)?"---ENEMY gets the initiative, meaning, you get to act SECOND---\n\n":"---YOU get the initiative, meaning, you get to act FIRST---\n\n";
+		Console.WriteLine(initvMsg);
+		bool error;
+
+		//----------MAIN TURN SEQUENCE---------------------------
+		for(
+			int turn=1;
+			!DeathPlayer && !DeathHostile;
+			turn++
+		)
+		{
+			Console.WriteLine("--[TURN: "+turn.ToString()+" ]--\n\n");
+			//--------SECONDARY TURN SEQUENCE----(action seq inside 1 turn)--------------
+			if (PlayerBegins == true)
+			{
+				Console.WriteLine("ACT!\n");
+				for(int i = 0; i < ActionPoints; i++)
+				{
+					Console.WriteLine("[ "+i.ToString()+" / "+ActionPoints.ToString()+" ] Action Points used");
+					parser.PrintCombatCommands();
+					Command command=parser.GetCombatCommand();
+					error=ProcessCombatCommand(command,hostile);
+					if (error==true){ i=-1; }
+					
+				}
+			}
+			else
+			{	//Enemy action
+				Console.WriteLine(hostile.GetHostileName()+" ATTACKS!\n");
+				int succes=rnd.Next(0,3);
+				if (succes == 0)
+				{
+					Item item=hostile.GetInventory().Get(hostile.WeaponHostile);
+					hostile.ModifierAplication(null,item,"source",player);
+					Console.WriteLine("You endured "+item.ItemModifierDescription+" [ "+item.ItemModValue+" of damage sustained]");
+					hostile.GetInventory().Put(item.ItemName,item);
+				}
+				else
+				{
+					Console.WriteLine(hostile.GetHostileName()+" MISSES!");
+				}
+				Console.WriteLine("ACT!\n");
+				for(int i = 0; i < ActionPoints; i++)//player action loop(player can act different times per turn depending on action points and how are they being spent)
+				{
+					Console.WriteLine("[ "+i.ToString()+" / "+ActionPoints.ToString()+" ] Action Points used");
+					parser.PrintCombatCommands();
+					Command command=parser.GetCombatCommand();
+					error=ProcessCombatCommand(command,hostile);
+					if (error==true){ i=-1; }
+					
+				}
+				
+			}
+
+			//-----------END TURN SEQUENCE------------------------------
+			int playerHP=player.GetHealth();
+			int hostileHP=hostile.GetHealth();//getting both combatants hp
+			Console.WriteLine("Your HP: "+playerHP.ToString());
+			Console.WriteLine(hostile.GetHostileName()+"'s HP: "+hostileHP.ToString());// letting player know
+			DeathPlayer=player.DeathCheck(playerHP);
+			DeathHostile=player.DeathCheck(hostileHP);//checking if any of combatants are dead
+			
+		}
 	}
 }

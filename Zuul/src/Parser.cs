@@ -32,11 +32,34 @@ class Parser
 		// If not, create a "null" command (for unknown command).
 		return new Command(null, null);
 	}
+	public Command GetCombatCommand()
+	{
+		Console.Write("> "); // print prompt
+
+		string word1 = null;
+
+		// string.Split() returns an array
+		string[] words = Console.ReadLine().Split(' ');
+		if (words.Length > 0) { word1 = words[0]; }
+
+		// Now check whether this word is known. If so, create a command with it.
+		if (commandLibrary.IsValidCombatCommandWord(word1)) {
+			return new Command(word1, null);
+		}
+
+		// If not, create a "null" command (for unknown command).
+		return new Command(null, null);
+	}
 
 	// Prints a list of valid command words from commandLibrary.
 	public void PrintValidCommands()
 	{
 		Console.WriteLine("Your command words are:");
 		Console.WriteLine(commandLibrary.GetCommandsString());
+	}
+	public void PrintCombatCommands()
+	{
+		Console.WriteLine("Your command words are:");
+		Console.WriteLine(commandLibrary.GetCombatCommandString());
 	}
 }

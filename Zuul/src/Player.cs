@@ -8,6 +8,7 @@ using System.Text;
 class Player : Character
 {
     //fields
+    public bool BeingEngaged {get;set;}
     public string WeaponPlayer { get; set; }
     // constructor
         public Player(string EquipedWeapon): base(EquipedWeapon)
