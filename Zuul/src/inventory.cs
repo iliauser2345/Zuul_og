@@ -1,4 +1,6 @@
+using System;
 using System.Xml;
+using System.Collections.Generic;
 
 class Inventory
 {

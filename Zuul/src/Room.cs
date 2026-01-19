@@ -27,8 +27,21 @@ class Room
 	}
 	//assign a hostile
 	public void AddHostile(string name, Hostile hostile)
-	{
+	{	
 		foes.Add(name,hostile);
+
+	}
+	public Hostile SummonHostile(string name)
+	{
+		if (foes.ContainsKey(name) == true)
+        {
+            Hostile gotEnemy=foes[name];
+            return gotEnemy;
+        }
+        else
+        {
+            return null;
+        }
 	}
 
 	// Define an exit for this room.

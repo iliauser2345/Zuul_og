@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 Random rnd=new Random();
 class Game
 {
@@ -8,6 +9,7 @@ class Game
 	private Parser parser;
 	private Player player;
 	private int ActionPoints;
+	public bool combat;
 
 	// Constructor
 	public Game()
@@ -77,7 +79,7 @@ class Game
 		Hostile professor=new Hostile("Professor","fireaxe",100,"an underpaid professor who guards this university as a side hustle is not pleased with your presence...");
 		//...
 		//Assign a Hostile to the Room
-		professor.CurrentRoom=theatre;
+		theatre.AddHostile("in a lecture theatre",professor); professor.GetInventory().Put("fireaxe",axe);
 		//...
 
 		// Start game outside
@@ -105,6 +107,11 @@ class Game
 		{	
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
+			if (combat == true)
+			{
+				CombatLoop(player,player.CurrentRoom.SummonHostile(player.CurrentRoom.GetShortDescription()));
+				combat=false;
+			}
 		}
 		if (player.DeathCheck(player.GetHealth()) == true)
 		{
@@ -264,6 +271,14 @@ class Game
 		player.CurrentRoom = nextRoom;
 		player.ModifierAplication(player.CurrentRoom,null,"room",player);
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		if (player.CurrentRoom.SummonHostile(player.CurrentRoom.GetShortDescription()) != null)
+		{
+
+			combat=true;
+		}
+		{
+			
+		}
 		
 	}
 	private void UseItem(Command command)
@@ -340,7 +355,9 @@ class Game
 		Console.WriteLine("Succesfully unequiped a "+item.ItemName);
 		player.GetInventory().Put(item.ItemName,item);
 	}
+	//#########################
 	//COMBAT RELATED STUFF
+	//#########################
 	private bool PlayerHasInitiative()
 	{
 		int initiative=rnd.Next(0,2);
@@ -388,6 +405,36 @@ class Game
 		}
 		return false;
 	}
+	private void PlayerCombatSeq(Hostile hostile)
+	{
+		Console.WriteLine("ACT!\n");
+		bool error=false;
+		for(int i = 0; i < ActionPoints; i++)
+		{
+			Console.WriteLine("[ "+i.ToString()+" / "+ActionPoints.ToString()+" ] Action Points used");
+			parser.PrintCombatCommands();
+			Command command=parser.GetCombatCommand();
+			error=ProcessCombatCommand(command,hostile);
+			if (error==true){ i=-1; }
+					
+		}
+	}
+	private void HostileCombatSeq(Hostile hostile)
+	{
+		Console.WriteLine(hostile.GetHostileName()+" ATTACKS!\n");
+		int succes=rnd.Next(0,3);
+		if (succes == 0)
+		{
+			Item item=hostile.GetInventory().Get(hostile.WeaponHostile);
+			hostile.ModifierAplication(null,item,"source",player);
+			Console.WriteLine("You endured "+item.ItemModifierDescription+" [ "+item.ItemModValue+" of damage sustained]");
+			hostile.GetInventory().Put(item.ItemName,item);
+		}
+		else
+		{
+			Console.WriteLine(hostile.GetHostileName()+" MISSES!");
+		}
+	}
 	//COMBAT LOOP
 	private void CombatLoop(Player player, Hostile hostile)
 	{
@@ -400,7 +447,6 @@ class Game
 		bool PlayerBegins=PlayerHasInitiative();
 		string initvMsg=(!PlayerBegins)?"---ENEMY gets the initiative, meaning, you get to act SECOND---\n\n":"---YOU get the initiative, meaning, you get to act FIRST---\n\n";
 		Console.WriteLine(initvMsg);
-		bool error;
 
 		//----------MAIN TURN SEQUENCE---------------------------
 		for(
@@ -412,43 +458,14 @@ class Game
 			Console.WriteLine("--[TURN: "+turn.ToString()+" ]--\n\n");
 			//--------SECONDARY TURN SEQUENCE----(action seq inside 1 turn)--------------
 			if (PlayerBegins == true)
-			{
-				Console.WriteLine("ACT!\n");
-				for(int i = 0; i < ActionPoints; i++)
-				{
-					Console.WriteLine("[ "+i.ToString()+" / "+ActionPoints.ToString()+" ] Action Points used");
-					parser.PrintCombatCommands();
-					Command command=parser.GetCombatCommand();
-					error=ProcessCombatCommand(command,hostile);
-					if (error==true){ i=-1; }
-					
-				}
+			{//if player has initiative, player begins, else enemy begins
+				PlayerCombatSeq(hostile);
+				HostileCombatSeq(hostile);
 			}
 			else
 			{	//Enemy action
-				Console.WriteLine(hostile.GetHostileName()+" ATTACKS!\n");
-				int succes=rnd.Next(0,3);
-				if (succes == 0)
-				{
-					Item item=hostile.GetInventory().Get(hostile.WeaponHostile);
-					hostile.ModifierAplication(null,item,"source",player);
-					Console.WriteLine("You endured "+item.ItemModifierDescription+" [ "+item.ItemModValue+" of damage sustained]");
-					hostile.GetInventory().Put(item.ItemName,item);
-				}
-				else
-				{
-					Console.WriteLine(hostile.GetHostileName()+" MISSES!");
-				}
-				Console.WriteLine("ACT!\n");
-				for(int i = 0; i < ActionPoints; i++)//player action loop(player can act different times per turn depending on action points and how are they being spent)
-				{
-					Console.WriteLine("[ "+i.ToString()+" / "+ActionPoints.ToString()+" ] Action Points used");
-					parser.PrintCombatCommands();
-					Command command=parser.GetCombatCommand();
-					error=ProcessCombatCommand(command,hostile);
-					if (error==true){ i=-1; }
-					
-				}
+				HostileCombatSeq(hostile);
+				PlayerCombatSeq(hostile);
 				
 			}
 
