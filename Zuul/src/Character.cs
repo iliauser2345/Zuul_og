@@ -7,6 +7,7 @@ using System.Text;
 
 class Character
 {
+    Random rnd=new Random();
  // auto property
    public Room CurrentRoom { get; set; }
 //fields
@@ -38,25 +39,27 @@ class Character
             return false;
         }
     }
-    public void ModifierAplication(Room enteredroom,Item item, string source,Character target) //ULTIMATE MODIFIER APPLIANCE METHOD from either a room or a use of item
+    public int ModifierAplication(Room enteredroom,Item item, string source,Character target) //ULTIMATE MODIFIER APPLIANCE METHOD from either a room or a use of item
 
     //!!!BY GIVING A ONE OF TWO CLASS PARAMETERS(ROOM OR ITEM) MAKE SURE TO SET THE NOT USED ONE TO null AND TARGET(Character class) IS REQUIRED!!!
     {
         string mod;
-        int value;
+        int valueMax;
+        int valueMin;
+        int roomValue;
         string modDescription;
         switch (source)
         {
             case "room"://From rooms
                 mod= enteredroom.modifier;
-                value= enteredroom.modifierValue;
+                roomValue= enteredroom.modifierValue;
                 modDescription=enteredroom.modifierDescpription;
                 switch (mod)
                 {
                     case "ModifyHP":
-                        target.HpModify(value);
+                        target.HpModify(roomValue);
                         Console.WriteLine(modDescription);
-                        break;
+                        return roomValue;
                     case "none":
                         Console.WriteLine(modDescription);
                         break;
@@ -68,15 +71,18 @@ class Character
 
                 }
                 enteredroom.modifier="explored";
-            break;
+                return 0;
+
             case "item"://From items or weapons
                 mod=item.ItemModifier;
-                value=item.ItemModValue;
+                valueMax=item.ItemModValueMax;
+                valueMin=item.ItemModValueMin;
+                int resultValue=rnd.Next(valueMin,valueMax);
                 modDescription=item.ItemModifierDescription;
                 switch (mod)
                 {
                     case "ModifyHP":
-                        target.HpModify(value);
+                        target.HpModify(resultValue);
                         Console.WriteLine(modDescription);
                     break;
                     case "none":
@@ -86,8 +92,10 @@ class Character
                             //... add more mods here
 
                 }
-            break;   
+            return resultValue;
+               
         }
+        return 0;
         
     }
 }

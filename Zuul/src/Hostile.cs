@@ -16,4 +16,5 @@ class Hostile : Character
     }
     //methods
     public string GetHostileName()=>HostileName;
+    public string GetHostileDesc()=>HostileDescription;
 }

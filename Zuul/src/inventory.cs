@@ -82,7 +82,7 @@ class Inventory
             {
                 outputNameItem=LoopThrItem.ItemDescription;
             }
-            string item=outputNameItem+": "+LoopThrItem.ItemModifier+" {"+LoopThrItem.ItemModValue.ToString()+"}\n";
+            string item="[ "+LoopThrItem.ItemName+" ] "+outputNameItem+": "+LoopThrItem.ItemModifier+" {"+LoopThrItem.ItemModValueMax.ToString()+"-"+LoopThrItem.ItemModValueMin.ToString()+"}\n";
             output+=item;
 		}
         return output;

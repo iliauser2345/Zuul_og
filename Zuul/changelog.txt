@@ -53,3 +53,13 @@ UnequipWeapon(Command)::void. unequips previously equipped weapon.
 professor is now an enemy and is assigned to the room
 ===================================================
 There is a super sick combat system, however beginning of it is not implemented.
+======================================================
+unhandeled exception by grabing unspecified item is FIXED( >grab ___ ->exception)
++
+end of combat now has a user output
++
+Random class used for randomised elements
++
+hostile description now goes into the output
++
+inventory output is somewhat clearer for the user. [Name]item: modifier{values}. This was implemented so that user knows which commands he has to use.

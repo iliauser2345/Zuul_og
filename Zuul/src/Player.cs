@@ -8,16 +8,16 @@ using System.Text;
 class Player : Character
 {
     //fields
-    public bool BeingEngaged {get;set;}
+    public bool IsDefending {get;set;}
     public string WeaponPlayer { get; set; }
     // constructor
-        public Player(string EquipedWeapon): base(EquipedWeapon)
-        {   
-            inventory= new Inventory(25);
-            CurrentRoom = null;
-            Health=25;
-            
-        }
+    public Player(string EquipedWeapon): base(EquipedWeapon)
+    {   
+        inventory= new Inventory(25);
+        CurrentRoom = null;
+        Health=100;
+        
+    }
     //methods
 }
    

@@ -9,11 +9,12 @@ class Item
     public string ItemType { get; }
     public string ItemModifier { get; }
     public string ItemModifierDescription { get; }
-    public int ItemModValue { get; }
+    public int ItemModValueMin { get; }
+    public int ItemModValueMax{ get; }
     public string ItemName{get;}
     
     //constructor
-    public Item(string name,int weight, string description, string type, string modifier,string moddesc, int value)
+    public Item(string name,int weight, string description, string type, string modifier,string moddesc, int minvalue,int maxvalue)
     {
         ItemName=name;
         Weight=weight;
@@ -21,6 +22,7 @@ class Item
         ItemType=type;
         ItemModifier=modifier;
         ItemModifierDescription=moddesc;
-        ItemModValue=value;
+        ItemModValueMin=minvalue;
+        ItemModValueMax=maxvalue;
     }
 }

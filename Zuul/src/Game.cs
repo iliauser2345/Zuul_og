@@ -1,7 +1,7 @@
 using System;
+using System.Formats.Asn1;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-Random rnd=new Random();
 class Game
 {
 	Random rnd=new Random();
@@ -67,16 +67,16 @@ class Game
 
 
 		// Create Items
-		Item water= new Item("water",2,"a bottle of refreshing water, in case you are thirsty","utility","ModifyHp","You took a sip of water and did not notice how it ran out",5);
-		Item whiskey= new Item("scotch",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",-3);
-		Item knife= new Item("switchblade",1,"a fancy switchblade. God prohibits violence but you never know when you need it...","weapon","ModifyHP","it's not the size, it's how you wield it",rnd.Next(-7,-10));
-		Item axe=new Item("fireaxe",5,"a fireaxe, usually found as a fire rescue tool but becomes a weapon to reckon with in good hands","weapon","ModifyHP","a powerfull swing of an axe makes the one enduring it actually feel",rnd.Next(-20,-30));
+		Item water= new Item("water",2,"a bottle of refreshing water, in case you are thirsty","utility","ModifyHp","You took a sip of water and did not notice how it ran out",5,7);
+		Item whiskey= new Item("scotch",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",-3,-2);
+		Item knife= new Item("switchblade",1,"a fancy switchblade. God prohibits violence but you never know when you need it...","weapon","ModifyHP","it's not the size, it's how you wield it",-15,-7);
+		Item axe=new Item("fireaxe",5,"a fireaxe, usually found as a fire rescue tool but becomes a weapon to reckon with in good hands","weapon","ModifyHP","a powerfull swing of an axe makes the one enduring it actually feel",-30,-20);
 
 		// And add them to the Rooms
-		lab.Chest.Put("scotch",whiskey);
-		outside.Chest.Put("switchblade",knife);
+		lab.Chest.Put(whiskey.ItemName,whiskey);
+		outside.Chest.Put(knife.ItemName,knife);
 		//Create Hostiles
-		Hostile professor=new Hostile("Professor","fireaxe",100,"an underpaid professor who guards this university as a side hustle is not pleased with your presence...");
+		Hostile professor=new Hostile("Professor","fireaxe",100,"an underpaid professor who guards this university as a side hustle and is not pleased with your presence...");
 		//...
 		//Assign a Hostile to the Room
 		theatre.AddHostile("in a lecture theatre",professor); professor.GetInventory().Put("fireaxe",axe);
@@ -206,13 +206,20 @@ class Game
 	//Grab item
 	public void Grab(Command command)
 	{
+		if (!command.HasSecondWord())
+		{
+			Console.WriteLine("Grab what?");
+			return;
+		}
 		string itemName=command.SecondWord;
 		Item item=player.CurrentRoom.Chest.Get(itemName);
+		
 		if (item != null)
 		{
 			player.GetInventory().Put(itemName,item);
 			Console.WriteLine("You have succesfully retrieved: "+item.ItemName);
 		}
+		
 		else
 		{
 			Console.WriteLine("After a several time of search you have failed to find "+itemName);
@@ -276,9 +283,6 @@ class Game
 
 			combat=true;
 		}
-		{
-			
-		}
 		
 	}
 	private void UseItem(Command command)
@@ -322,7 +326,7 @@ class Game
 		if (item == null)
 		{
 			Console.WriteLine("There is no such weapon in your inventory");
-			player.GetInventory().Put(itemName,item);
+			//player.GetInventory().Put(itemName,item);
 			return;
 		}
 		string typeItem=item.ItemType;
@@ -381,7 +385,9 @@ class Game
 				Attack(target);
 				break;
 			case "defend":
-				Defend();
+				return Defend();
+			default:
+				Console.WriteLine("You weren't able to react quickly[!WRONG COMMAND: ACTION POINT LOST!]");
 				break;
 		}
 		return false;
@@ -391,8 +397,9 @@ class Game
 		if (ActionPoints >= 1)
 		{
 			Item item=player.GetInventory().Get(player.WeaponPlayer);
-			player.ModifierAplication(null,item,"item",target);
-			ActionPoints=-1;
+			int dealt=player.ModifierAplication(null,item,"item",target);
+			ActionPoints--;
+			Console.WriteLine("You manage to strike an opponent [ "+dealt.ToString()+" of damage dealt]\n");
 			player.GetInventory().Put(item.ItemName,item);
 		}
 	}
@@ -400,7 +407,7 @@ class Game
 	{
 		if (ActionPoints >= 2)
 		{	
-			ActionPoints=-2;
+			ActionPoints-=2;
 			return true;
 		}
 		return false;
@@ -408,41 +415,46 @@ class Game
 	private void PlayerCombatSeq(Hostile hostile)
 	{
 		Console.WriteLine("ACT!\n");
-		bool error=false;
-		for(int i = 0; i < ActionPoints; i++)
+		bool defended;
+		for(int i = 0; i <= ActionPoints; i++)
 		{
-			Console.WriteLine("[ "+i.ToString()+" / "+ActionPoints.ToString()+" ] Action Points used");
+			Console.WriteLine("[ "+ActionPoints.ToString()+" ] Action Points left");
 			parser.PrintCombatCommands();
 			Command command=parser.GetCombatCommand();
-			error=ProcessCombatCommand(command,hostile);
-			if (error==true){ i=-1; }
+			defended=ProcessCombatCommand(command,hostile);
+			if (defended==true){ player.IsDefending=true; }
 					
 		}
 	}
 	private void HostileCombatSeq(Hostile hostile)
 	{
 		Console.WriteLine(hostile.GetHostileName()+" ATTACKS!\n");
-		int succes=rnd.Next(0,3);
-		if (succes == 0)
+		int succes=rnd.Next(0,10);
+		if (succes<=8 && !player.IsDefending)
 		{
 			Item item=hostile.GetInventory().Get(hostile.WeaponHostile);
-			hostile.ModifierAplication(null,item,"source",player);
-			Console.WriteLine("You endured "+item.ItemModifierDescription+" [ "+item.ItemModValue+" of damage sustained]");
+			int dealt=player.ModifierAplication(null,item,"item",player);
+			Console.WriteLine("You endured "+item.ItemModifierDescription+" [ "+dealt+" of damage sustained]\n");
 			hostile.GetInventory().Put(item.ItemName,item);
 		}
-		else
+		else if(succes>8)
 		{
-			Console.WriteLine(hostile.GetHostileName()+" MISSES!");
+			Console.WriteLine(hostile.GetHostileName()+" MISSES!\n");
+		}else if (player.IsDefending == true)
+		{
+			Console.WriteLine("Attack blocked![0 damage sustained]\n");
 		}
+		player.IsDefending=false;
 	}
 	//COMBAT LOOP
 	private void CombatLoop(Player player, Hostile hostile)
 	{
 
-		//-----------INITIALYSING COMBAT-------------------------
+		//-----------INITIALISING COMBAT-------------------------
 		bool DeathPlayer=false;
 		bool DeathHostile=false;
 		Console.WriteLine("---!!!-ENTERING COMBAT-!!!---\n\n");
+		Console.WriteLine("You have encountered "+hostile.GetHostileDesc()+"\n\n");
 		ActionPoints=2;
 		bool PlayerBegins=PlayerHasInitiative();
 		string initvMsg=(!PlayerBegins)?"---ENEMY gets the initiative, meaning, you get to act SECOND---\n\n":"---YOU get the initiative, meaning, you get to act FIRST---\n\n";
@@ -455,7 +467,12 @@ class Game
 			turn++
 		)
 		{
+			ActionPoints=2;
 			Console.WriteLine("--[TURN: "+turn.ToString()+" ]--\n\n");
+			int playerHP=player.GetHealth();
+			int hostileHP=hostile.GetHealth();//getting both combatants hp
+			Console.WriteLine("Your HP: "+playerHP.ToString());
+			Console.WriteLine(hostile.GetHostileName()+"'s HP: "+hostileHP.ToString());// letting player know
 			//--------SECONDARY TURN SEQUENCE----(action seq inside 1 turn)--------------
 			if (PlayerBegins == true)
 			{//if player has initiative, player begins, else enemy begins
@@ -470,13 +487,22 @@ class Game
 			}
 
 			//-----------END TURN SEQUENCE------------------------------
-			int playerHP=player.GetHealth();
-			int hostileHP=hostile.GetHealth();//getting both combatants hp
+			playerHP=player.GetHealth();
+			hostileHP=hostile.GetHealth();//getting both combatants hp
 			Console.WriteLine("Your HP: "+playerHP.ToString());
 			Console.WriteLine(hostile.GetHostileName()+"'s HP: "+hostileHP.ToString());// letting player know
 			DeathPlayer=player.DeathCheck(playerHP);
 			DeathHostile=player.DeathCheck(hostileHP);//checking if any of combatants are dead
 			
 		}
+		if (DeathPlayer == true)
+		{
+			Console.WriteLine(hostile.GetHostileName()+" has struck you down!\n");
+		}else if (DeathHostile == true)
+		{
+			Console.WriteLine("You have struck down the "+hostile.GetHostileName()+"\n");
+		}
+		Console.WriteLine("---!!!-LEAVING COMBAT-!!!---\n\n");
+		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 }
