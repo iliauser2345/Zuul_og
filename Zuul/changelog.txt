@@ -63,3 +63,7 @@ Random class used for randomised elements
 hostile description now goes into the output
 +
 inventory output is somewhat clearer for the user. [Name]item: modifier{values}. This was implemented so that user knows which commands he has to use.
+==========================================================
+bugfix
++
+Equipped item is now an actual item and not a string

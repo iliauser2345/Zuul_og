@@ -12,11 +12,13 @@ class Item
     public int ItemModValueMin { get; }
     public int ItemModValueMax{ get; }
     public string ItemName{get;}
+    public bool VisibilityItem{get;}
     
     //constructor
-    public Item(string name,int weight, string description, string type, string modifier,string moddesc, int minvalue,int maxvalue)
+    public Item(bool visibility,string name,int weight, string description, string type, string modifier,string moddesc, int minvalue,int maxvalue)
     {
         ItemName=name;
+        VisibilityItem=visibility;
         Weight=weight;
         ItemDescription=description;
         ItemType=type;

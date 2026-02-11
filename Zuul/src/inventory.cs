@@ -74,16 +74,19 @@ class Inventory
 		)
 		{
 			Item LoopThrItem=inv.items.Values.ElementAt(i);
-            if (entry == "INVENTORY")
+            if (LoopThrItem.VisibilityItem != false)
             {
-                outputNameItem="Weight Capacity:[ "+inv.TotalWeight().ToString()+inv.maxWeight.ToString()+" ]\n \n"+LoopThrItem.ItemName+" [ "+LoopThrItem.ItemType+" ]";
+                if (entry == "INVENTORY")
+                {
+                    outputNameItem="Weight Capacity:[ "+inv.TotalWeight().ToString()+inv.maxWeight.ToString()+" ]\n \n"+LoopThrItem.ItemName+" [ "+LoopThrItem.ItemType+" ]";
+                }
+                else
+                {
+                    outputNameItem=LoopThrItem.ItemDescription;
+                }
+                output+="[ "+LoopThrItem.ItemName+" ] "+outputNameItem+": "+LoopThrItem.ItemModifier+" {"+LoopThrItem.ItemModValueMax.ToString()+"-"+LoopThrItem.ItemModValueMin.ToString()+"}\n";
             }
-            else
-            {
-                outputNameItem=LoopThrItem.ItemDescription;
-            }
-            string item="[ "+LoopThrItem.ItemName+" ] "+outputNameItem+": "+LoopThrItem.ItemModifier+" {"+LoopThrItem.ItemModValueMax.ToString()+"-"+LoopThrItem.ItemModValueMin.ToString()+"}\n";
-            output+=item;
+            
 		}
         return output;
     }

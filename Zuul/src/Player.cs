@@ -9,14 +9,14 @@ class Player : Character
 {
     //fields
     public bool IsDefending {get;set;}
-    public string WeaponPlayer { get; set; }
+    public Item WeaponPlayer { get; set; }
     // constructor
-    public Player(string EquipedWeapon): base(EquipedWeapon)
+    public Player(Item EquipedWeapon): base(EquipedWeapon)
     {   
         inventory= new Inventory(25);
         CurrentRoom = null;
         Health=100;
-        
+        WeaponPlayer=EquipedWeapon;
     }
     //methods
 }

@@ -67,23 +67,27 @@ class Game
 
 
 		// Create Items
-		Item water= new Item("water",2,"a bottle of refreshing water, in case you are thirsty","utility","ModifyHp","You took a sip of water and did not notice how it ran out",5,7);
-		Item whiskey= new Item("scotch",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",-3,-2);
-		Item knife= new Item("switchblade",1,"a fancy switchblade. God prohibits violence but you never know when you need it...","weapon","ModifyHP","it's not the size, it's how you wield it",-15,-7);
-		Item axe=new Item("fireaxe",5,"a fireaxe, usually found as a fire rescue tool but becomes a weapon to reckon with in good hands","weapon","ModifyHP","a powerfull swing of an axe makes the one enduring it actually feel",-30,-20);
+		Item water= new Item(true,"water",2,"a bottle of refreshing water, in case you are thirsty","utility","ModifyHp","You took a sip of water and did not notice how it ran out",5,7);
+		Item whiskey= new Item(true,"scotch",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",-3,-2);
+		Item knife= new Item(true,"switchblade",1,"a fancy switchblade. God prohibits violence but you never know when you need it...","weapon","ModifyHP","it's not the size, it's how you wield it",-15,-10);
+		Item axe=new Item(true,"fireaxe",5,"a fireaxe, usually found as a fire rescue tool but becomes a weapon to reckon with in good hands","weapon","ModifyHP","a powerfull swing of an axe makes the one enduring it actually feel",-30,-20);
+		Item hands=new Item(false,"default",0,"a good ol pair of hands. an ultimate weapon you were born with","weapon","ModifyHP","enduring a swing of a fist won't be a problem, but the humiliation",-7,-3);
 
 		// And add them to the Rooms
 		lab.Chest.Put(whiskey.ItemName,whiskey);
 		outside.Chest.Put(knife.ItemName,knife);
 		//Create Hostiles
-		Hostile professor=new Hostile("Professor","fireaxe",100,"an underpaid professor who guards this university as a side hustle and is not pleased with your presence...");
+		Hostile professor=new Hostile("Professor",axe,100,"an underpaid professor who guards this university as a side hustle and is not pleased with your presence...");
 		//...
 		//Assign a Hostile to the Room
 		theatre.AddHostile("in a lecture theatre",professor); professor.GetInventory().Put("fireaxe",axe);
 		//...
 
-		// Start game outside
+		// Start game outside with bare hands
 		player.CurrentRoom = outside;
+		player.WeaponPlayer=hands;
+		player.GetInventory().Put(hands.ItemName,hands);
+		
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -229,6 +233,11 @@ class Game
 	// Drop item
 	public void Drop(Command command)
 	{
+		if (!command.HasSecondWord())
+		{
+			Console.WriteLine("Drop what?");
+			return;
+		}
 		string itemName=command.SecondWord;
 		Item item=player.GetInventory().Get(itemName);
 		if (item != null)
@@ -326,7 +335,6 @@ class Game
 		if (item == null)
 		{
 			Console.WriteLine("There is no such weapon in your inventory");
-			//player.GetInventory().Put(itemName,item);
 			return;
 		}
 		string typeItem=item.ItemType;
@@ -336,15 +344,16 @@ class Game
 			player.GetInventory().Put(itemName,item);
 			return;
 		}
-		if (player.WeaponPlayer != null)
+		if (player.WeaponPlayer != null && player.WeaponPlayer.ItemName!="default")
 		{
-			Console.WriteLine("Your hands are busy with a "+player.WeaponPlayer);
+			Console.WriteLine("Your hands are busy with a "+player.WeaponPlayer.ItemName);
 			player.GetInventory().Put(itemName,item);
 			return;
 		}
-		player.WeaponPlayer=itemName;
 		Console.WriteLine("Now you are armed and dangerous with a "+itemName);
+		player.GetInventory().Put(player.GetInventory().Get("default").ItemName,player.GetInventory().Get("default"));
 		player.GetInventory().Put(itemName,item);
+		player.WeaponPlayer=item;
 	}
 	private void UnequipWeapon(Command command)
 	{
@@ -355,7 +364,16 @@ class Game
 			return;
 		}
 		Item item=player.GetInventory().Get(command.SecondWord);
-		player.WeaponPlayer=null;
+		if(item==null)
+		{
+			Console.WriteLine("no such item currently equipped");
+			return;
+		}else if (item.ItemName == "default")
+		{
+			Console.WriteLine("Your hands are empty");
+			return;
+		}
+		player.WeaponPlayer=player.GetInventory().Get("default");
 		Console.WriteLine("Succesfully unequiped a "+item.ItemName);
 		player.GetInventory().Put(item.ItemName,item);
 	}
@@ -396,7 +414,7 @@ class Game
 	{
 		if (ActionPoints >= 1)
 		{
-			Item item=player.GetInventory().Get(player.WeaponPlayer);
+			Item item=player.GetInventory().Get(player.WeaponPlayer.ItemName);
 			int dealt=player.ModifierAplication(null,item,"item",target);
 			ActionPoints--;
 			Console.WriteLine("You manage to strike an opponent [ "+dealt.ToString()+" of damage dealt]\n");
@@ -432,7 +450,7 @@ class Game
 		int succes=rnd.Next(0,10);
 		if (succes<=8 && !player.IsDefending)
 		{
-			Item item=hostile.GetInventory().Get(hostile.WeaponHostile);
+			Item item=hostile.GetInventory().Get(hostile.WeaponHostile.ItemName);
 			int dealt=player.ModifierAplication(null,item,"item",player);
 			Console.WriteLine("You endured "+item.ItemModifierDescription+" [ "+dealt+" of damage sustained]\n");
 			hostile.GetInventory().Put(item.ItemName,item);

@@ -13,14 +13,12 @@ class Character
 //fields
     protected int Health;
     protected Inventory inventory;
-    protected Item EquipedWeapon;
 
  // constructor
-    public Character(string equipment)
+    public Character(Item equipment)
     {   
        // inventory= new Inventory(25);
         CurrentRoom = null;
-        EquipedWeapon=null;
     }
     public int GetHealth()=>Health;
     public Inventory GetInventory()=>inventory;

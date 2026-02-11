@@ -3,9 +3,9 @@ class Hostile : Character
     //Fields
     private string HostileName;
     private string HostileDescription;
-    public string WeaponHostile { get; set; }
+    public Item WeaponHostile { get; set; }
     //Constructor
-    public Hostile(string name,string EquipedWeapon, int HP, string desc) : base(EquipedWeapon)//example Name: Bandit, Weapon: Axe, HP: 150, Desc: A bandit-like bandit
+    public Hostile(string name,Item EquipedWeapon, int HP, string desc) : base(EquipedWeapon)//example Name: Bandit, Weapon: Axe, HP: 150, Desc: A bandit-like bandit
     {
         inventory= new Inventory(99);
         CurrentRoom=null;
