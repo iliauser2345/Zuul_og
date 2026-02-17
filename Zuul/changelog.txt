@@ -67,3 +67,5 @@ inventory output is somewhat clearer for the user. [Name]item: modifier{values}.
 bugfix
 +
 Equipped item is now an actual item and not a string
+==================================================
+combat check and actionpoints are now inside player since it's only relevant there

@@ -10,6 +10,9 @@ class Player : Character
     //fields
     public bool IsDefending {get;set;}
     public Item WeaponPlayer { get; set; }
+    public int ActionPoints {get; set;}
+    public bool Engaged {get; set;}
+   // private Dictionary<string,Item> PlayerEquipment;
     // constructor
     public Player(Item EquipedWeapon): base(EquipedWeapon)
     {   
@@ -17,6 +20,8 @@ class Player : Character
         CurrentRoom = null;
         Health=100;
         WeaponPlayer=EquipedWeapon;
+        Engaged=false;
+        ActionPoints=2;
     }
     //methods
 }

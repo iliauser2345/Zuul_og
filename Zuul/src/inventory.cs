@@ -84,7 +84,7 @@ class Inventory
                 {
                     outputNameItem=LoopThrItem.ItemDescription;
                 }
-                output+="[ "+LoopThrItem.ItemName+" ] "+outputNameItem+": "+LoopThrItem.ItemModifier+" {"+LoopThrItem.ItemModValueMax.ToString()+"-"+LoopThrItem.ItemModValueMin.ToString()+"}\n";
+                output+="[ "+LoopThrItem.ItemName+" ] "+outputNameItem+": {"+LoopThrItem.ItemModValueMax.ToString()+LoopThrItem.ItemModValueMin.ToString()+"}\n";
             }
             
 		}

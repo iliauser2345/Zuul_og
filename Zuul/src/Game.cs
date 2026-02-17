@@ -8,8 +8,8 @@ class Game
 	// Private fields
 	private Parser parser;
 	private Player player;
-	private int ActionPoints;
-	public bool combat;
+	//private int ActionPoints;
+	//public bool combat;
 
 	// Constructor
 	public Game()
@@ -71,8 +71,8 @@ class Game
 		Item whiskey= new Item(true,"scotch",2,"a Good ol' bottle of scotch, dated 1968. You could almost say it's a treasure.","utility","ModifyHP","You have took a sip of a scotch. The taste of it was unimaginable however you refuse to drink more of it to preserve your perception ability",-3,-2);
 		Item knife= new Item(true,"switchblade",1,"a fancy switchblade. God prohibits violence but you never know when you need it...","weapon","ModifyHP","it's not the size, it's how you wield it",-15,-10);
 		Item axe=new Item(true,"fireaxe",5,"a fireaxe, usually found as a fire rescue tool but becomes a weapon to reckon with in good hands","weapon","ModifyHP","a powerfull swing of an axe makes the one enduring it actually feel",-30,-20);
-		Item hands=new Item(false,"default",0,"a good ol pair of hands. an ultimate weapon you were born with","weapon","ModifyHP","enduring a swing of a fist won't be a problem, but the humiliation",-7,-3);
-
+		Item hands=new Item(false,"default",0,"a good ol pair of hands. An ultimate weapon you were born with","weapon","ModifyHP","enduring a swing of a fist won't be a problem, but the humiliation",-7,-3);
+		Item coat=new Item(true,"overcoat",8,"An old dusty winter military overcoat. Not really suitable for this weather however thick wool gives you somewhat of a protection. You never know when you need it...","armor","deflection","a thick wool layer prevents you from sustaining major bruises",5,20);
 		// And add them to the Rooms
 		lab.Chest.Put(whiskey.ItemName,whiskey);
 		outside.Chest.Put(knife.ItemName,knife);
@@ -111,10 +111,10 @@ class Game
 		{	
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
-			if (combat == true)
+			if (player.Engaged == true)
 			{
 				CombatLoop(player,player.CurrentRoom.SummonHostile(player.CurrentRoom.GetShortDescription()));
-				combat=false;
+				player.Engaged=false;
 			}
 		}
 		if (player.DeathCheck(player.GetHealth()) == true)
@@ -290,7 +290,7 @@ class Game
 		if (player.CurrentRoom.SummonHostile(player.CurrentRoom.GetShortDescription()) != null)
 		{
 
-			combat=true;
+			player.Engaged=true;
 		}
 		
 	}
@@ -351,7 +351,6 @@ class Game
 			return;
 		}
 		Console.WriteLine("Now you are armed and dangerous with a "+itemName);
-		player.GetInventory().Put(player.GetInventory().Get("default").ItemName,player.GetInventory().Get("default"));
 		player.GetInventory().Put(itemName,item);
 		player.WeaponPlayer=item;
 	}
@@ -404,6 +403,14 @@ class Game
 				break;
 			case "defend":
 				return Defend();
+			case "item":
+				break;
+			case "dodge":
+				break;
+			case "parry":
+				break;
+			case "":
+				break;
 			default:
 				Console.WriteLine("You weren't able to react quickly[!WRONG COMMAND: ACTION POINT LOST!]");
 				break;
@@ -412,20 +419,20 @@ class Game
 	}
 	private void Attack(Character target)
 	{
-		if (ActionPoints >= 1)
+		if (player.ActionPoints >= 1)
 		{
 			Item item=player.GetInventory().Get(player.WeaponPlayer.ItemName);
 			int dealt=player.ModifierAplication(null,item,"item",target);
-			ActionPoints--;
+			player.ActionPoints--;
 			Console.WriteLine("You manage to strike an opponent [ "+dealt.ToString()+" of damage dealt]\n");
 			player.GetInventory().Put(item.ItemName,item);
 		}
 	}
 	private bool Defend()
 	{
-		if (ActionPoints >= 2)
+		if (player.ActionPoints >= 2)
 		{	
-			ActionPoints-=2;
+			player.ActionPoints-=2;
 			return true;
 		}
 		return false;
@@ -434,9 +441,9 @@ class Game
 	{
 		Console.WriteLine("ACT!\n");
 		bool defended;
-		for(int i = 0; i <= ActionPoints; i++)
+		for(int i = 0; i <= player.ActionPoints; i++)
 		{
-			Console.WriteLine("[ "+ActionPoints.ToString()+" ] Action Points left");
+			Console.WriteLine("[ "+player.ActionPoints.ToString()+" ] Action Points left");
 			parser.PrintCombatCommands();
 			Command command=parser.GetCombatCommand();
 			defended=ProcessCombatCommand(command,hostile);
@@ -473,7 +480,7 @@ class Game
 		bool DeathHostile=false;
 		Console.WriteLine("---!!!-ENTERING COMBAT-!!!---\n\n");
 		Console.WriteLine("You have encountered "+hostile.GetHostileDesc()+"\n\n");
-		ActionPoints=2;
+		player.ActionPoints=2;
 		bool PlayerBegins=PlayerHasInitiative();
 		string initvMsg=(!PlayerBegins)?"---ENEMY gets the initiative, meaning, you get to act SECOND---\n\n":"---YOU get the initiative, meaning, you get to act FIRST---\n\n";
 		Console.WriteLine(initvMsg);
@@ -485,7 +492,7 @@ class Game
 			turn++
 		)
 		{
-			ActionPoints=2;
+			player.ActionPoints=2;
 			Console.WriteLine("--[TURN: "+turn.ToString()+" ]--\n\n");
 			int playerHP=player.GetHealth();
 			int hostileHP=hostile.GetHealth();//getting both combatants hp
@@ -522,5 +529,6 @@ class Game
 		}
 		Console.WriteLine("---!!!-LEAVING COMBAT-!!!---\n\n");
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		player.ActionPoints=2;
 	}
 }
